@@ -34,7 +34,7 @@ Images that have similar visual characteristics should ideally produce embedding
 
 This project therefore explores the complete pipeline:
 
-Image -> EfficientNetV2-S -> 1280-D embedding -> PCA -> 512-D embedding -> Cosine similarity -> Top-K visually similar images
+*Image -> EfficientNetV2-S -> 1280-D embedding -> PCA -> 512-D embedding -> Cosine similarity -> Top-K visually similar images*
 
 
 The project uses CIFAR-10 as the image database.
@@ -76,9 +76,9 @@ No dataset files need to be committed to the repository.
 
 A classifier produces a probability distribution over predefined classes.
 For example:
-cat 0.92
-dog 0.04
-bird 0.02
+cat 0.92,
+dog 0.04,
+bird 0.02,
 ...
 
 
@@ -101,7 +101,7 @@ The project uses a pretrained EfficientNetV2-S model from torchvision.
 The network is used as a feature extractor rather than as a conventional classifier.
 
 Conceptually:
-Input image -> EfficientNetV2-S -> feature representation -> 1280-dimensional embedding
+`Input image -> EfficientNetV2-S -> feature representation -> 1280-dimensional embedding`
 
 
 The pretrained network provides a rich visual representation without requiring the project to train a CNN from scratch.
@@ -116,7 +116,7 @@ Each CIFAR-10 image is passed through EfficientNetV2-S.
 The classifier output is not the representation used for retrieval.
 Instead, the network's feature representation is extracted before the final classification layer.
 
-The resulting embedding matrix has the shape: (10000, 1280)
+The resulting embedding matrix has the shape: `(10000, 1280)`
 
 
 This means:
@@ -142,7 +142,7 @@ Although this representation is useful, high-dimensional vectors can be expensiv
 Principal Component Analysis (PCA) provides a way to reduce dimensionality while preserving as much variance as possible.
 The project evaluates several representations:
 
-1280 dimensions -> 512 -> 256 -> 128 -> 64 -> 32 -> 2
+`1280 dimensions -> 512 -> 256 -> 128 -> 64 -> 32 -> 2`
 
 
 For example: `1280-D -> 512-D` reduces the dimensionality by 60% while attempting to preserve the most important structure of the original representation.
@@ -181,7 +181,7 @@ This is essential for meaningful similarity search.
 Once both the database and query embeddings are represented in the same space, the system calculates their similarity.
 The project uses cosine similarity:
 
-$$\text{cosine\_similarity}(q, x) = \frac{q \cdot x}{\|q\| \|x\|}$$
+`cosine_similarity(q, x) = (q · x) / (||q|| ||x||)`
 
 
 where:
@@ -200,10 +200,10 @@ A value closer to 1 means the vectors point in similar directions; a value close
 
 The database embeddings are normalized when the search engine is initialized.
 For normalized vectors:
-cosine similarity = dot product
+**cosine similarity = dot product**
 
 Therefore, retrieval can be performed efficiently using matrix multiplication:
-database embeddings × query embedding -> similarity scores
+**database embeddings × query embedding -> similarity scores**
 
 
 The system then selects the highest-scoring images.
@@ -214,61 +214,61 @@ The default number of retrieved images is `Top-K = 5`.
 ## **Complete Retrieval Pipeline**
 
 The complete system can be summarized as:
-QUERY IMAGE
-↓
-EfficientNetV2-S
-↓
-1280-D embedding
-↓
-fitted PCA (512-D)
-↓
-Normalize vector
-↓
-Cosine similarity with CIFAR-10 embedding DB (10,000 × 512)
-↓
-Rank similarities
-↓
-Top-K results
+QUERY IMAGE<br>
+↓<br>
+EfficientNetV2-S<br>
+↓<br>
+1280-D embedding<br>
+↓<br>
+fitted PCA (512-D)<br>
+↓<br>
+Normalize vector<br>
+↓<br>
+Cosine similarity with CIFAR-10 embedding DB (10,000 × 512)<br>
+↓<br>
+Rank similarities<br>
+↓<br>
+Top-K results<br>
 
 ---
 
 ## **Project Structure**
-visual-image-search/
-│
-├── data/
-│ └── CIFAR-10 dataset
-│
-├── embeddings/
-│ ├── embeddings.npy
-│ ├── embeddings_pca_512.npy
-│ ├── embeddings_pca_256.npy
-│ ├── embeddings_pca_128.npy
-│ ├── embeddings_pca_64.npy
-│ ├── embeddings_pca_32.npy
-│ ├── embeddings_pca_2.npy
-│ ├── metadata.csv
-│ ├── pca_512.joblib
-│ └── pca_variance.json
-│
-├── results/
-│ ├── evaluation.json
-│ └── pca_2d.png
-│
-├── src/
-│ ├── init.py
-│ ├── build_pca.py
-│ ├── config.py
-│ ├── dataset.py
-│ ├── evaluate.py
-│ ├── extract_embeddings.py
-│ ├── model.py
-│ ├── search.py
-│ └── visualize.py
-│
-├── app.py
-├── .gitignore
-├── requirements.txt
-└── README.md
+visual-image-search/<br>
+|<br>
+├── data/<br>
+│ └── CIFAR-10 dataset<br>
+│<br>
+├── embeddings/<br>
+│ ├── embeddings.npy<br>
+│ ├── embeddings_pca_512.npy<br>
+│ ├── embeddings_pca_256.npy<br>
+│ ├── embeddings_pca_128.npy<br>
+│ ├── embeddings_pca_64.npy<br>
+│ ├── embeddings_pca_32.npy<br>
+│ ├── embeddings_pca_2.npy<br>
+│ ├── metadata.csv<br>
+│ ├── pca_512.joblib<br>
+│ └── pca_variance.json<br>
+│<br>
+├── results/<br>
+│ ├── evaluation.json<br>
+│ └── pca_2d.png<br>
+│<br>
+├── src/<br>
+│ ├── init.py<br>
+│ ├── build_pca.py<br>
+│ ├── config.py<br>
+│ ├── dataset.py<br>
+│ ├── evaluate.py<br>
+│ ├── extract_embeddings.py<br>
+│ ├── model.py<br>
+│ ├── search.py<br>
+│ └── visualize.py<br>
+│<br>
+├── app.py<br>
+├── .gitignore<br>
+├── requirements.txt<br>
+└── README.md<br>
 
 
 ---
@@ -358,8 +358,9 @@ The other PCA dimensions are retained for experimentation and comparison.
 ## **Reproducibility**
 
 The project uses a fixed random seed:
-
+```text
 RANDOM_SEED = 42
+```
 
 This is used for reproducible PCA configuration and experimental behaviour where randomness is involved.
 
@@ -445,12 +446,16 @@ python --version
 
 The Python version should report Python 3.12.x.
 
+---
+
 ## **Dataset**
 
 CIFAR-10 is downloaded automatically by torchvision.
 No manual dataset download is required.
 The dataset is stored locally under data/.
 The data/ directory is excluded from Git.
+
+---
 
 ## **Running the pipeline**
 The project can be executed in several stages.
@@ -491,6 +496,8 @@ python src/visualize.py
 ```
 The PCA visualization is saved under results/pca_2d.png.
 
+---
+
 ## **Running the Web Application**
 
 The project includes an interactive Streamlit interface.
@@ -510,6 +517,8 @@ Compare it against the CIFAR-10 embedding database.
 Retrieve the most visually similar images.
 Inspect similarity scores and predicted classes.
 
+---
+
 ## **Evaluation Philosophy**
 
 A key distinction in this project is between:
@@ -525,6 +534,8 @@ The project combines:
 + embedding-space visualization;
 + PCA variance analysis;
 + ualitative inspection of retrieved examples.
+
+---
 
 ## **Results and Interpretation**
 
@@ -543,45 +554,51 @@ The 2D PCA representation provides a visual approximation of the geometry of the
 Classes that form relatively coherent regions indicate that the pretrained representation captures meaningful visual structure.
 However, the 2D projection should not be interpreted as the complete structure of the original 1280-dimensional space.
 
+---
+
 ## **Important Engineering Considerations**
 
-# **Same representation space**
+### **Same representation space**
 
 The database and query must be represented in the same feature space.
 This means that if the database uses 512-D PCA embeddings, the query must also be transformed into the same 512-D PCA space before calculating similarity.
 
-# **Normalization**
+### **Normalization**
 
 Embeddings are L2-normalized before cosine similarity is computed.
 This allows cosine similarity to be implemented efficiently as a dot product.
 
-# **Pretrained model vs. training from scratch**
+### **Pretrained model vs. training from scratch**
 
 This project does not train EfficientNetV2-S from scratch.
 Instead, it uses the pretrained network as a visual feature extractor.
 This significantly reduces training requirements and demonstrates a practical transfer-learning workflow.
 
+---
+
 ## **Limitations**
 
 There are several limitations to the current implementation.
 
-# **Dataset size**
+### **Dataset size**
 The retrieval database contains 10,000 CIFAR-10 images.
 A production visual search system would typically operate over much larger collections.
 
-# **Search complexity**
+### **Search complexity**
 The current implementation compares the query against all database embeddings.
 For a database of 10,000 images this is completely reasonable.
 For millions of images, a brute-force matrix comparison would become increasingly expensive.
 A production-scale system could use approximate nearest-neighbour methods such as FAISS, Annoy, HNSW, or vector databases.
 
-# **Domain mismatch**
+### **Domain mismatch**
 EfficientNetV2-S was pretrained on a large natural-image dataset, while CIFAR-10 contains very small 32 × 32 images.
 The resulting embedding space is therefore not specifically optimized for CIFAR-10 retrieval.
 
-# **Retrieval quality**
+### **Retrieval quality**
 The current system relies on the representation learned by the pretrained model.
 A retrieval model trained specifically with metric-learning objectives could potentially produce a better embedding space.
+
+---
 
 ## **Conclusion**
 
@@ -606,6 +623,8 @@ That representation-learning perspective is fundamental to many modern applicati
 - multimodal models
 - image-text search
 - and modern vector databases
+
+---
 
 ## **Author**
 Olivia Méndez Blanco. This project was developed as a practical study of: deep learning, transfer learning, representation learning, image embeddings, dimensionality reduction, vector similarity, information retrieval, reproducible machine learning and scalable search architectures.
